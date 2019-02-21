@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block des %}
+    {% if category %}
+<!-- category means the object of the Category model with the slug name passed-->
+        {{ category.description|truncatewords:155 }}
+    {% else %}
+        Welcome to the Store - This is the else statement
+    {% endif %}
+{% endblock %}
+{% block title %}
+    {% if category %}
+        {{ category.name }} - Perfect Cushion Store
+    {% else %}
+        See our Cushion Collection
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <!--breadcrum navigation-->
+    {% if category %}
+        <div class="row my_row_class">
+            <div class="mx-auto">
+                <p><a href="{% url 'Shop:allProdCat' %}">Our Product</a> | {{ category.name }}</p>
+                <!-- This line is activated only if a slug field is present -->
+            </div>
+        </div>
+    {% else %}
+        <div>
+            <p class="text-center">The category is not true</p>
+        </div>
+    {% endif %}
+    <div class="mx-auto">
+    {% if category %}
+        <img class="my_img_class" src="{{category.img.url}}" alt="{{category.name}}"/>
+        <!-- this link should be same as model image field is defined.-->
+    <br>
+        <p></p>
+        <div>
+            <h1 class="text-center my_title">{{ category.name }}</h1>
+            <p class="text-justify">{{ category.description }}</p>
+        </div>
+    {% else %}
+        <img class="my_img_class my_image_padding" src="{% static 'img/banner.jpg' %}" alt="Banner image">
+        <br>
+        <div>
+            <h1 class="text-center my_title">Our Products Collections</h1>
+            <p class="text-justify">Here will be some list of lines anything you want to write can be writtren about the perfect-cushion collection.</p>
+        </div>
+    </div>
+    {% endif %}
+    <div class="container">
+        <div class="row mx-auto">
+            {% for product in products.object_list %}
+            <!--object_list is added to products for the paginator object to iterate -->
+                <div class="my_button_margin col-12 col-sm-12 col-md-4 col-lg-4">
+                    <div class="card text-center" style="min-width: 18rem;">
+                        <a href="{{ product.get_url }}"><img class="card-img-top my-image" src="{{product.image.url}}" alt="Product Image"/></a>
+                        <div class="card-body text-center">
+                            <h3>{{product.name}}</h3>
+                            <h4>${{product.price}}</h4>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="mx-auto">
+            {% if products.paginator.num_pages > 1 %}
+            <hr>
+            <div class="text-center">
+                {% for pg in products.paginator.page_range %}
+                <a href="?raj={{pg}}" class="btn btn-light btn-sm {% if products.number == pg %}active{% endif %}">{{pg}}</a>
+                <!-- ? is the page format which should be used -->
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        <br>
+    </div>
+{% endblock %}
